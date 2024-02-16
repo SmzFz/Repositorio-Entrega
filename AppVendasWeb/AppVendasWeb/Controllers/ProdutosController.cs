@@ -48,8 +48,25 @@ namespace AppVendasWeb.Controllers
         // GET: Produtos/Create
         public IActionResult Create()
         {
+            List<Categoria> listaCategorias = _context.Categorias.ToList();
+
+            ViewData["ListaCategorias"] = listaCategorias;
+
             ViewData["CategoriaId"] = new SelectList(_context.Categorias, "CategoriaId", "CategoriaNome");
             return View();
+        }
+        public IActionResult SelecionaCategoria(Guid? id)
+        {
+            List<Categoria> listaCategorias = _context.Categorias.ToList();
+            ViewData["ListaCategorias"] = listaCategorias;
+
+            Categoria categoria = _context.Categorias.FirstOrDefault(c => c.CategoriaId == id);
+            if (categoria != null)
+            {
+                ViewData["CategoriaSelecionado"] = categoria.CategoriaNome;
+                ViewData["IdSelecionado"] = categoria.CategoriaId;
+            }
+            return View("Create");
         }
 
         // POST: Produtos/Create
@@ -57,17 +74,23 @@ namespace AppVendasWeb.Controllers
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create([Bind("ProdutoId,Descricao,Preco,CategoriaId")] Produto produto)
+        public async Task<IActionResult> Create([Bind("ProdutoId,Descricao,Preco,CategoriaId")] Produto produto, string? CategoriaNome)
         {
-            if (ModelState.IsValid)
+            try
             {
                 produto.ProdutoId = Guid.NewGuid();
+                Categoria produtoCategoria = _context.Categorias.FirstOrDefault(c => c.CategoriaNome == CategoriaNome);
+                produto.CategoriaId = produtoCategoria.CategoriaId;
+                produto.Categoria = produtoCategoria;
                 _context.Add(produto);
                 await _context.SaveChangesAsync();
                 return RedirectToAction(nameof(Index));
             }
-            ViewData["CategoriaId"] = new SelectList(_context.Categorias, "CategoriaId", "CategoriaNome", produto.CategoriaId);
-            return View(produto);
+            catch
+            {
+                ViewData["CategoriaId"] = new SelectList(_context.Categorias, "CategoriaId", "CategoriaNome", produto.CategoriaId);
+                return View(produto);
+            }
         }
 
         // GET: Produtos/Edit/5

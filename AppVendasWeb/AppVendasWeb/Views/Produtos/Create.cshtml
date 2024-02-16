@@ -1,9 +1,18 @@
 ﻿@model AppVendasWeb.Models.Produto
 
 @{
-    ViewData["Title"] = "Create";
-}
+    ViewData["Title"] = "Nova Categoria";
+    List<Categoria> listaCategorias = (List<Categoria>)ViewData["ListaCategorias"];
 
+
+    Produto produto = (Produto)ViewData["ProdutoSelecionado"];
+    List<Produto> listaProdutosSelecionados = new List<Produto>();
+    listaProdutosSelecionados.Add(produto);
+
+    ViewBag.CategoriaId = new SelectList(listaCategorias, "CategoriaId", "CategoriaNome");
+
+
+}
 <h1>Create</h1>
 
 <h4>Produto</h4>
@@ -23,11 +32,21 @@
                 <span asp-validation-for="Preco" class="text-danger"></span>
             </div>
             <div class="form-group">
-                <label asp-for="CategoriaId" class="control-label"></label>
-                <select asp-for="CategoriaId" class="form-control" asp-items="ViewBag.CategoriaId"></select>
+                <p>Categoria</p>
+                <input id="CategoriaNome" name="CategoriaNome" class="form-control p-2 py-3 rounded-end" value="@ViewData["CategoriaSelecionado"]" readonly />
+                <input asp-for="CategoriaId" type="hidden" value="@ViewData["IdeSelecionado"]" />
+                <span asp-validation-for="CategoriaId" class="text-danger"></span>
+                <button type="button" class="btn btn-outline-light p-2 py-3" data-bs-toggle="modal" data-bs-target="#janelaCategoria">
+                    <svg bootstrap-icon="Search" width="20" height="20" aria-label="Pesquisar"></svg> Buscar Categoria
+                </button>
             </div>
-            <div class="form-group">
-                <input type="submit" value="Create" class="btn btn-primary" />
+            <div class="col">
+                <div class="form-group">
+                    <button type="submit" class="btn btn-success w-100 h-100">
+                        <svg bootstrap-icon="CheckLg" width="20" height="20" aria-label="Pesquisar"></svg>
+                        <br /> Salvar
+                    </button>
+                </div>
             </div>
         </form>
     </div>
@@ -36,6 +55,97 @@
 <div>
     <a asp-action="Index">Back to List</a>
 </div>
+<div class="modal fade" id="janelaCategoria" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-labelledby="staticBackdropLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-scrollable">
+        <div class="modal-content bg-dark bg-gradient text-light">
+            <div class="modal-header">
+                <h1 class="modal-title fs-5" id="staticBackdropLabel">Selecione a Categoria</h1>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <div>
+                    <div class="input-group mb-3">
+                        <input type="text" class="form-control" name="buscaCategoria"
+                               placeholder="Pesquisar por nome" aria-label="Pesquisar por nome"
+                               aria-describedby="button-addon2">
+                        <a class="btn btn-outline-light" id="button-addon2">
+                            <svg bootstrap-icon="Search" width="16" height="16" aria-label="Pesquisar"></svg>
+                        </a>
+                    </div>
+                </div>
+
+                <div class="table-responsive">
+                    <table class="table table-dark table-striped table-hover" id="tabelaCategoria">
+                        <thead>
+                            <tr>
+                                <th>
+                                    Nome do Categoria
+                                </th>
+                                <th>
+                                    Selecionar
+                                </th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @foreach (var item in listaCategorias)
+                            {
+                                <tr>
+                                    <td>
+                                        @Html.DisplayFor(modelItem => item.CategoriaNome)
+                                    </td>
+
+
+                                    <td class="text-center">
+                                        <a class="text-decoration-none link-light" asp-controller="Produtos" asp-action="SelecionaCategoria" asp-route-id="@item.CategoriaId" asp-route-id="@item.CategoriaId">
+                                            <svg class="mx-2" bootstrap-icon="Check2Square" width="20" height="20" aria-label="Editar"></svg>
+
+                                        </a>
+                                    </td>
+                                </tr>
+                            }
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+<script>
+    // Função para filtrar os clientes na tabela
+    function filtrarCategorias() {
+        // Obtém o valor digitado no campo de busca
+        var input = document.querySelector('input[name="buscaCategoria"]').value.toUpperCase();
+        // Obtém todas as linhas da tabela
+        var rows = document.querySelectorAll('#tabelaCategoria tbody tr');
+        // Percorre todas as linhas da tabela
+        rows.forEach(function (row) {
+            // Obtém o nome do cliente na linha atual
+            var categoriaNome = row.querySelector('td:nth-child(1)').textContent.toUpperCase();
+            // Verifica se o nome do cliente contém o valor digitado no campo de busca
+            if (categoriaNome.indexOf(input) > -1) {
+                // Se o nome do cliente contiver o valor de busca, exibe a linha
+                row.style.display = '';
+            } else {
+                // Se não, oculta a linha
+                row.style.display = 'none';
+            }
+        });
+    }
+
+    // Adiciona um evento de clique ao botão de busca
+    document.getElementById('button-addon2').addEventListener('click', filtrarCategorias);
+
+    // Adiciona um evento de tecla pressionada ao campo de busca
+    document.querySelector('input[name="buscaCategoria"]').addEventListener('keyup', function (event) {
+        // Verifica se a tecla pressionada foi Enter
+        if (event.keyCode === 13) {
+            // Se foi, chama a função de filtragem de clientes
+            filtrarCategorias();
+        }
+    });
+</script>
 
 @section Scripts {
     @{

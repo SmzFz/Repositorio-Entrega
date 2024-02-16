@@ -7,6 +7,18 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <Compile Remove="Models\AddCategoria.cs" />
+    <Compile Remove="Models\NovaCat.cs" />
+    <Compile Remove="Views\Home\AddCat.cs" />
+    <Compile Remove="Views\Home\AddCat.cshtml.cs" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Content Remove="Views\Home\AddCat.cshtml" />
+    <Content Remove="Views\Home\CriarCat.cshtml" />
+  </ItemGroup>
+
+  <ItemGroup>
     <PackageReference Include="bootstrap" Version="5.3.2" />
     <PackageReference Include="BootstrapIcons.AspNetCore" Version="1.11.0" />
     <PackageReference Include="Microsoft.AspNetCore.Components.QuickGrid.EntityFrameworkAdapter" Version="8.0.2" />

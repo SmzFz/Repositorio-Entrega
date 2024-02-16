@@ -1,7 +1,7 @@
-﻿@model AppVendasWeb.Models.NovaVenda
+﻿@model AppVendasWeb.Models.NovaCat
 
 @{
-    ViewData["Title"] = "Nova Venda";
+    ViewData["Title"] = "NovaCat";
     List<Produto> listaProdutos = (List<Produto>)ViewData["ListaProdutos"];
     List<Cliente> listaClientes = (List<Cliente>)ViewData["ListaClientes"];
 
@@ -18,7 +18,7 @@
 <hr />
 <div class="row">
     <div class="col12">
-        <form asp-action="IniciarVenda">
+        <form asp-action="NovaCat">
             <div asp-validation-summary="ModelOnly" class="text-danger"></div>
 
             <div class="row g-2">
